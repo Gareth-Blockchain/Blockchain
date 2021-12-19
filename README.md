@@ -29,3 +29,5 @@ Currently the dapp is simple and there are future functions I am busy adding tha
     voters, this way we can make sure the voters are knowledgable in that field for that proposal. 
     
 2.) Payments: The future of the application would be to allow the payments for the projects to happen on the application itself. This is in development.
+
+3.) Gas optimization: At this time, only a few steps have been followed to optimize the gas fee. This is a continuing process and is updated all the time. It is vry import to       limit the cost of a smart contract.
