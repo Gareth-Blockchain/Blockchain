@@ -25,6 +25,7 @@ contract GovProj{
 		bool isRegistered;
 		bool hasVoted;
 		uint votedTenderId;
+		uint commityID;
 	}
 
 	//Storing the proposal details
@@ -35,6 +36,7 @@ contract GovProj{
 		uint budget;
 		uint timeLine;
 		uint winningTender;
+		uint proposalCommityID;
 		StateOfProposal state;
 	}
 
@@ -51,7 +53,7 @@ contract GovProj{
 		string reason;
 	}
 
-	/** Variables to keep count for the mappins */
+	/** Variables to keep count for the mappings */
 	uint public numVoters = 0;
 	uint public numProposals = 0;
 	uint public numTenders = 0;
@@ -60,9 +62,9 @@ contract GovProj{
 	address public administrator;
 
 	/** Mappings to store the data */
-	mapping(address => Voter) public voters;
 	mapping(uint => Proposal) public proposals;
 	mapping(uint => Tender) public tenders;
+	mapping(uint => mapping(address => Voter)) public commities;
 
 	/** Modifiers */
 	modifier onlyAdministrator() {
@@ -71,9 +73,15 @@ contract GovProj{
 		_;
 	}
 
-	modifier onlyRegisteredVoter() {
-		require(voters[msg.sender].isRegistered,
+	modifier onlyRegisteredVoter(uint _commityId) {
+		require(commities[_commityId][msg.sender].isRegistered,
 		"must be voter");
+		_;
+	}
+
+	modifier onlyCorrectCommityMember(uint _commityId, uint _proposalID, address _voter) {
+		require(commities[_commityId][_voter].commityID == proposals[_proposalID].proposalCommityID, 
+		"Wrong commity");
 		_;
 	}
 
@@ -103,13 +111,13 @@ contract GovProj{
 	}
 
 	/** Function to register a voter */
-	function registerVoter(address _voterAddress) public {
+	function registerVoter(address _voterAddress, uint _commityId) public {
 
 		//Making sure the voter hasn't registered already
-		require(!voters[_voterAddress].isRegistered, "the voter is already registered");
+		require(!commities[_commityId][_voterAddress].isRegistered, "the voter is already registered");
 
 		//Setting the voter attributes
-		voters[_voterAddress] = Voter(true, false, 0);
+		commities[_commityId][_voterAddress] = Voter(true, false, 0, _commityId);
 
 		//Incrementing the number of voters
 		numVoters++;
@@ -118,10 +126,10 @@ contract GovProj{
 	}
 
 	/** Function to register a proposal */
-	function registerProposal(bytes32 _proposalName, string memory _proposalDescription, uint _proposalBudget, uint _proposalTimeLine) public onlyAdministrator{
+	function registerProposal(bytes32 _proposalName, string memory _proposalDescription, uint _proposalBudget, uint _proposalTimeLine, uint _commityID) public onlyAdministrator{
 	
 		//Setting proposal attributes
-		proposals[numProposals] = Proposal(numProposals, _proposalName, _proposalDescription, _proposalBudget, _proposalTimeLine, 0, StateOfProposal.OPEN);
+		proposals[numProposals] = Proposal(numProposals, _proposalName, _proposalDescription, _proposalBudget, _proposalTimeLine, 0, _commityID, StateOfProposal.OPEN);
 
 		//Incrementing the number of proposals
 		numProposals++;
@@ -182,10 +190,13 @@ contract GovProj{
 	modifier: only registered voters may vote
 	
 	*/
-	function vote(uint _tenderId, uint _proposalID) public onlyRegisteredVoter {
+	function vote(uint _tenderId, uint _proposalID, uint _commityId, address _voter) public onlyRegisteredVoter(_commityId) onlyCorrectCommityMember(_commityId, _proposalID, _voter) {
+
+		//Check to see they are voting for a legitimate tender
+		require(_tenderId <= numTenders, "tender does not exist");
 
 		//Check to see the voter hasn't voted yet
-		require(!voters[msg.sender].hasVoted, "the user has already voted");
+		require(!commities[_commityId][msg.sender].hasVoted, "the user has already voted");
 
 		//Make sure the tender they are voting for has been accepted
 		require(tenders[_tenderId].accepted == true, "Tender must be accepted tender");
@@ -193,12 +204,9 @@ contract GovProj{
 		//Check to make sure the proposal is still open
 		require(proposals[_proposalID].state == StateOfProposal.OPEN, "Voting for proposal has closed");
 
-		//Check to see they are voting for a legitimate tender
-		require(_tenderId <= numTenders, "tender does not exist");
-
 		//Change the voters attributes accordingly
-		voters[msg.sender].hasVoted = true;
-		voters[msg.sender].votedTenderId = _tenderId;
+		commities[_commityId][msg.sender].hasVoted = true;
+		commities[_commityId][msg.sender].votedTenderId = _tenderId;
 
 		//Increment the tenders votes by 1
 		tenders[_tenderId].voteCount += 1;
@@ -280,6 +288,32 @@ contract GovProj{
 		numTend = numTenders;
 	}
 
+	function getNumberOfDeclinedTenders() public view returns (uint numDTenders) {
+
+		uint numDtenders = 0;
+
+		for(uint x = 0; x < numTenders; x++){
+			if(tenders[x].accepted == false){
+				numDtenders++;
+			}
+		}
+
+		numDTenders = numDtenders;
+	}
+
+	function getNumberOfSuccessfullTenders() public view returns (uint numSTenders) {
+
+		uint numStenders = 0;
+
+		for(uint x = 0; x < numTenders; x++){
+			if(tenders[x].accepted == true){
+				numStenders++;
+			}
+		}
+
+		numSTenders = numStenders;
+	}
+
 	//Check if the user is the admin
 	function isAdministrator(address _address) public view returns (bool isAdmin) {
 		isAdmin = (_address == administrator);
@@ -287,12 +321,16 @@ contract GovProj{
 
 	
 	/** Getters for voter information */
-	function isVoterReg(address _voterAddress) public view returns (bool isReg) {
-		isReg = voters[_voterAddress].isRegistered;
+	function isVoterReg(address _voterAddress, uint _commityId) public view returns (bool isReg) {
+		isReg = commities[_commityId][_voterAddress].isRegistered;
 	}
 
-	function hasVoterVoted(address _voterAddress) public view returns (bool hasVot) {
-		hasVot = voters[_voterAddress].hasVoted;
+	function hasVoterVoted(address _voterAddress, uint _commityId) public view returns (bool hasVot) {
+		hasVot = commities[_commityId][_voterAddress].hasVoted;
+	}
+
+	function getVoterCommity(address _voterAddress, uint _commityId) public view returns (uint comId) {
+		comId = commities[_commityId][_voterAddress].commityID;
 	}
 
 
