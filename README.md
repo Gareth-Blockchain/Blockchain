@@ -13,10 +13,9 @@ which passed the smart contracts conditions. Once everyone has voted, the admin 
 Many functions exist however there are a few main ones worth mentioning. Registering a proposal is the first and can only be done by the admin. The proposal will have a name, 
 description, budget and a specified maximum amount of time the project must take.
 
-The next function would be registering a tender for a proposal. This would need the tendering company to provide their name, fee, time they think they will take and a true or false
-declaration stating if they are family or friends with anyone apart of the voting commity. The voting commity for that project will be available to view.
+The next function would be registering a tender for a proposal. This would need the tendering company to provide their name, fee, time they think they will take and a true or false declaration stating if they are family or friends with anyone apart of the voting commity. The voting commity for that project will be available to view.
 
-Next would be registering a voter. When a voter registers, they just provide their address and they are sorted. This keeps the anonymity.
+Next would be registering a voter. When a voter registers, they just provide their address and which commity they are apart of and they are sorted. This keeps the anonymity.
 
 Voters may vote, this function allows only registered voters to vote, they simply vote for the tender they agree with.
 
