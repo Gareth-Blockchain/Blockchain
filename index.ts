@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { GovProj } from "contracts/GovProj.sol";
+import { GovProj } from "../typechain/GovProj";
 
 
 describe("GovProj", function () {
@@ -16,7 +16,7 @@ describe("GovProj", function () {
     it("should register voter and get number of voters must equal 1", async () => {
       await contract.deployed();
 
-      await contract.registerVoter(0xeeC42985268F85f06243Fc717198534c6cC0B19C);
+      await contract.registerVoter(0xeeC42985268F85f06243Fc717198534c6cC0B19C, 0);
 
       const numVoters = await contract.getNumberOfVoters();
       
@@ -28,7 +28,7 @@ describe("GovProj", function () {
     it("should register proposal and get number of proposals must equal 1", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       const numProposals = await contract.getNumberOfProposals();
       
@@ -40,7 +40,7 @@ describe("GovProj", function () {
     it("should add a tender", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tender4Name", 950, 950, false);
 
@@ -54,11 +54,11 @@ describe("GovProj", function () {
     it("should add a vote to the successfull tender", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
 
-      await contract.vote(0,0)
+      await contract.vote(0,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
 
       const numVotes = await contract.getTenderVoteCount(0, true);
       
@@ -70,17 +70,17 @@ describe("GovProj", function () {
     it("should return 1 as it will be the id of the tender with the most votes", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
       await contract.registerTender(0, "tender2Name",900, 900, false)
       await contract.registerTender(0, "tender3Name",850, 850, false)
 
-      await contract.vote(0,0)
-      await contract.vote(1,0)
-      await contract.vote(2,0)
-      await contract.vote(1,0)
-      await contract.vote(1,0)
+      await contract.vote(0,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(2,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
 
       await contract.tallyVotes(0);
 
@@ -94,17 +94,17 @@ describe("GovProj", function () {
     it("should return tender2Name", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
       await contract.registerTender(0, "tender2Name",900, 900, false)
       await contract.registerTender(0, "tender3Name",850, 850, false)
 
-      await contract.vote(0,0)
-      await contract.vote(1,0)
-      await contract.vote(2,0)
-      await contract.vote(1,0)
-      await contract.vote(1,0)
+      await contract.vote(0,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(2,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
 
       await contract.tallyVotes(0);
 
@@ -118,17 +118,17 @@ describe("GovProj", function () {
     it("should return 3", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
       await contract.registerTender(0, "tender2Name",900, 900, false)
       await contract.registerTender(0, "tender3Name",850, 850, false)
 
-      await contract.vote(0,0)
-      await contract.vote(1,0)
-      await contract.vote(2,0)
-      await contract.vote(1,0)
-      await contract.vote(1,0)
+      await contract.vote(0,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(2,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
 
       await contract.tallyVotes(0);
 
@@ -142,17 +142,17 @@ describe("GovProj", function () {
     it("should return 900", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
       await contract.registerTender(0, "tender2Name",900, 900, false)
       await contract.registerTender(0, "tender3Name",850, 850, false)
 
-      await contract.vote(0,0)
-      await contract.vote(1,0)
-      await contract.vote(2,0)
-      await contract.vote(1,0)
-      await contract.vote(1,0)
+      await contract.vote(0,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(2,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
 
       await contract.tallyVotes(0);
 
@@ -166,17 +166,17 @@ describe("GovProj", function () {
     it("should return 900", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
       await contract.registerTender(0, "tender2Name",900, 900, false)
       await contract.registerTender(0, "tender3Name",850, 850, false)
 
-      await contract.vote(0,0)
-      await contract.vote(1,0)
-      await contract.vote(2,0)
-      await contract.vote(1,0)
-      await contract.vote(1,0)
+      await contract.vote(0,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(2,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
+      await contract.vote(1,0,0,0xeeC42985268F85f06243Fc717198534c6cC0B19C)
 
       await contract.tallyVotes(0);
 
@@ -206,6 +206,16 @@ describe("GovProj", function () {
     });
   });
 
+  describe("getNumberOfTenders", () => {
+    it("should return 0", async () => {
+      await contract.deployed();
+
+      const numDeclaredTenders = await contract.getNumberOfTenders();
+
+      expect(numDeclaredTenders.toNumber()).to.equal(0);
+    });
+  });
+
   describe("getNumberOfDeclinedTenders", () => {
     it("should return 0", async () => {
       await contract.deployed();
@@ -230,9 +240,9 @@ describe("GovProj", function () {
     it("should return true", async () => {
       await contract.deployed();
 
-      await contract.registerVoter(0xeeC42985268F85f06243Fc717198534c6cC0B19C);
+      await contract.registerVoter(0xeeC42985268F85f06243Fc717198534c6cC0B19C, 0);
 
-      const isReg = await contract.isVoterReg(0xeeC42985268F85f06243Fc717198534c6cC0B19C);
+      const isReg = await contract.isVoterReg(0xeeC42985268F85f06243Fc717198534c6cC0B19C, 0);
       
       expect(isReg).to.equal(true);
     });
@@ -245,7 +255,7 @@ describe("GovProj", function () {
     it("should return test1", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       const name = await contract.getProposalName(0);
       
@@ -257,7 +267,7 @@ describe("GovProj", function () {
     it("should return test1 Descr", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       const descr = await contract.getProposalDescription(0);
       
@@ -269,7 +279,7 @@ describe("GovProj", function () {
     it("should return 1000", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       const budget = await contract.getProposalBudget(0);
       
@@ -281,7 +291,7 @@ describe("GovProj", function () {
     it("should return 1000", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       const time = await contract.getProposalTime(0);
       
@@ -293,7 +303,7 @@ describe("GovProj", function () {
     it("should return tenderName", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
 
@@ -307,7 +317,7 @@ describe("GovProj", function () {
     it("should return 950", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
 
@@ -321,7 +331,7 @@ describe("GovProj", function () {
     it("should return 950", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
 
@@ -335,7 +345,7 @@ describe("GovProj", function () {
     it("should return 1", async () => {
       await contract.deployed();
 
-      await contract.registerProposal("test1", "test1 Descr", 1000, 1000);
+      await contract.registerProposal("test1", "test1 Descr", 1000, 1000, 0);
 
       await contract.registerTender(0, "tenderName",950, 950, false)
 
