@@ -10,12 +10,15 @@ function App() {
 
   //Voter variables
   const [voterAddress, setVoterAddress] = useState()
+  const [commityID, setCommityID] = useState()
 
   //Proposal variables
   const [pName, setProposalName] = useState()
   const [pDescr, setProposalDescription] = useState()
   const [pBudget, setProposalBudget] = useState()
   const [pTime, setProposalTime] = useState()
+  const [pCommityID, setpCommityID] = useState()
+
 
   //Tender variables
   const [tID, setTenderID] = useState()
@@ -31,6 +34,8 @@ function App() {
   const [pID, proposalID] = useState()
   const [pIDFV, proposalIDForVote] = useState()
   const [tIDFV, tenderIDForVote] = useState()
+  const [vAddress, setVoterVoteAddress] = useState()
+  const [vCommityID, setVoterVoteCommityID] = useState()
 
 
   //---------------------------------------------------------------------------------------------------------------------
@@ -103,13 +108,13 @@ function App() {
 
   /** REGISTRATION METHODS */ 
   async function registerVoter() {
-    if (!voterAddress) return
+    if (!voterAddress || !commityID) return
     if (typeof window.ethereum !== 'undefined') {
       await requestAccount()
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner()
       const contract = new ethers.Contract(contractAddress, GovProj.abi, signer)
-      const transaction = await contract.registerVoter(voterAddress)
+      const transaction = await contract.registerVoter(voterAddress, commityID)
       await transaction.wait()
       console.log('This voter registration has excecuted')
 
@@ -117,14 +122,14 @@ function App() {
   }
 
   async function registerProposal() {
-    if (!pName || !pDescr || !pBudget || !pTime) return
+    if (!pName || !pDescr || !pBudget || !pTime || !pCommityID) return
 
     if (typeof window.ethereum !== 'undefined') {
       await requestAccount()
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner()
       const contract = new ethers.Contract(contractAddress, GovProj.abi, signer)
-      const transaction = await contract.registerProposal(pName, pDescr, pBudget, pTime)
+      const transaction = await contract.registerProposal(pName, pDescr, pBudget, pTime, pCommityID)
       await transaction.wait()
       console.log('This proposal registration has excecuted')
 
@@ -169,7 +174,7 @@ function App() {
   
   /** METHOD FOR VOTING */
   async function vote() {
-    if(!pIDFV || !tIDFV) return
+    if(!pIDFV || !tIDFV || vCommityID || vAddress) return
 
     if (typeof window.ethereum !== 'undefined') {
       await requestAccount()
@@ -177,7 +182,7 @@ function App() {
       const signer = provider.getSigner()
       const contract = new ethers.Contract(contractAddress, GovProj.abi, signer)
       
-      const transaction = await contract.vote(tIDFV, pIDFV)
+      const transaction = await contract.vote(tIDFV, pIDFV, vCommityID, vAddress)
       await transaction.wait()
       console.log('This vote has excecuted')
 
@@ -203,6 +208,7 @@ function App() {
         <div id="registerVoter">
             <h2>Registering a voter</h2>
             <input onChange={e => setVoterAddress(e.target.value)} placeholder="Set Voter Address" />
+            <input onChange={e => setCommityID(e.target.value)} placeholder="Set Commity ID" />
             <button onClick={registerVoter}>Register Voter</button><br></br>
         </div>
         <div id="registerProposal">
@@ -211,6 +217,7 @@ function App() {
             <input onChange={e => setProposalDescription(e.target.value)} placeholder="Set Proposal Descr" />
             <input onChange={e => setProposalBudget(e.target.value)} placeholder="Set Proposal Budget" />
             <input onChange={e => setProposalTime(e.target.value)} placeholder="Set Proposal Timeline" />
+            <input onChange={e => setpCommityID(e.target.value)} placeholder="Set Commity ID" />
             <button onClick={registerProposal}>Register Proposal</button><br></br>
         </div>
         <div id="registerTender">
@@ -226,6 +233,8 @@ function App() {
             <h2>Voting</h2>
             <input onChange={e => proposalIDForVote(e.target.value)} placeholder="Proposal ID" />
             <input onChange={e => tenderIDForVote(e.target.value)} placeholder="Tender ID" />
+            <input onChange={e => setVoterVoteAddress(e.target.value)} placeholder="Set Voter Address" />
+            <input onChange={e => setVoterVoteCommityID(e.target.value)} placeholder="Set Commity ID" />
             <button onClick={vote}>Vote</button><br></br>
         </div>
         <div id="tallying">
