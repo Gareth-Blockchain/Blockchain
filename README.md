@@ -25,7 +25,7 @@ Tally votes will find the tender with the highest votes, for that proposal, and 
 Currently the dapp is simple and there are future functions I am busy adding that will be developed soon.
 
 1.) Specific voting commities: At this time, there are a group of voters and they can vote for any proposals tenders. I am wanting to have each specific proposal to have its own
-    voters, this way we can make sure the voters are knowledgable in that field for that proposal. 
+    voters, this way we can make sure the voters are knowledgable in that field for that proposal. COMPLETED
     
 2.) Payments: The future of the application would be to allow the payments for the projects to happen on the application itself. This is in development.
 
