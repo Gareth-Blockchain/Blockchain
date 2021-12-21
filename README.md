@@ -15,7 +15,9 @@ description, budget and a specified maximum amount of time the project must take
 
 The next function would be registering a tender for a proposal. This would need the tendering company to provide their name, fee, time they think they will take and a true or false declaration stating if they are family or friends with anyone apart of the voting commity. The voting commity for that project will be available to view.
 
-Next would be registering a voter. When a voter registers, they just provide their address and which commity they are apart of and they are sorted. This keeps the anonymity.
+Next would be registering a voter. When a voter registers, they just provide their address and which commity they are apart of and they will be registered. This keeps the anonymity. However, they are not eligible to vote, as this would allow anyone to just register and vote. An admin will have to approve them before they are allowed to vote.
+
+Approving a voter is another very important function. An admin has the ability to approve the correct voters into the voting commities.
 
 Voters may vote, this function allows only registered voters to vote, they simply vote for the tender they agree with.
 
